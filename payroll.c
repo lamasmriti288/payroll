@@ -4,7 +4,7 @@ struct employee
 {
     int id;
     char name[30];
-
+  
     float basic;
 
     float hra;

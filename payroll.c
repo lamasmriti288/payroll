@@ -4,7 +4,7 @@ struct employee
 {
     int id;
     char name[30];
-  
+
     float basic;
 
     float hra;
@@ -17,6 +17,31 @@ struct employee
     float gross;
     float net;
 };
+
+// Nepal Tax Slab Function
+float calculateTax(float annualIncome)
+{
+    float tax = 0;
+
+    if(annualIncome <= 500000)
+    {
+        tax = annualIncome * 0.01;
+    }
+    else if(annualIncome <= 700000)
+    {
+        tax = (500000 * 0.01) +(annualIncome - 500000) * 0.10;
+    }
+    else if(annualIncome <= 1000000)
+    {
+        tax = (500000 * 0.01) +(200000 * 0.10) + (annualIncome - 700000) * 0.20;
+    }
+    else
+    {
+        tax = (500000 * 0.01) +(200000 * 0.10) + (300000 * 0.20) + (annualIncome - 1000000) * 0.30;
+    }
+
+    return tax;
+}
 
 int main()
 {
@@ -33,8 +58,9 @@ int main()
         printf("\n------ NEPAL PAYROLL SYSTEM ------\n");
         printf("1 Add Employee\n");
         printf("2 Show All Employees\n");
-        printf("3 Print Salary Slip\n");
-        printf("4 Exit\n");
+        printf("3 Print One Salary Slip\n");
+        printf("4 Print All Salary Slips\n");
+        printf("5 Exit\n");
 
         printf("Enter choice: ");
         scanf("%d",&choice);
@@ -64,9 +90,13 @@ int main()
             // Gross salary
             emp[n].gross = emp[n].basic + emp[n].hra + emp[n].da + emp[n].ma;
 
-            // Deductions
-            emp[n].pf  = emp[n].basic * 0.10;
-            emp[n].tax = emp[n].gross * 0.10;   // 10% tax
+            // PF Deduction
+            emp[n].pf = emp[n].basic * 0.10;
+
+            // Tax Calculation (Slab-based)
+            float annualIncome = emp[n].gross * 12;
+            float annualTax = calculateTax(annualIncome);
+            emp[n].tax = annualTax / 12;
 
             // Net salary
             emp[n].net = emp[n].gross - (emp[n].pf + emp[n].tax);
@@ -78,6 +108,12 @@ int main()
 
         else if(choice==2)
         {
+            if(n == 0)
+            {
+                printf("No employees available\n");
+                continue;
+            }
+
             printf("\nID\tName\t\tBasic Salary\n");
 
             for(i=0;i<n;i++)
@@ -94,11 +130,11 @@ int main()
             printf("Enter Employee ID: ");
             scanf("%d",&searchId);
 
-            found=0;
+            found = 0;
 
             for(i=0;i<n;i++)
             {
-                if(emp[i].id==searchId)
+                if(emp[i].id == searchId)
                 {
                     printf("\n------ SALARY SLIP ------\n");
 
@@ -113,20 +149,53 @@ int main()
                     printf("\nGross Salary : %.2f\n",emp[i].gross);
 
                     printf("PF Deduction : %.2f\n",emp[i].pf);
-                    printf("Tax (10%%)    : %.2f\n",emp[i].tax);
+                    printf("Tax (Slab)   : %.2f\n",emp[i].tax);
 
                     printf("\nNet Salary   : %.2f\n",emp[i].net);
 
-                    found=1;
+                    found = 1;
                     break;
                 }
             }
 
-            if(found==0)
-            printf("Employee not found\n");
+            if(found == 0)
+            {
+                printf("Employee not found\n");
+            }
         }
 
         else if(choice==4)
+        {
+            if(n == 0)
+            {
+                printf("No employees available\n");
+                continue;
+            }
+
+            for(i=0;i<n;i++)
+            {
+                printf("\n------ SALARY SLIP ------\n");
+
+                printf("Employee ID : %d\n",emp[i].id);
+                printf("Name        : %s\n\n",emp[i].name);
+
+                printf("Basic Salary : %.2f\n",emp[i].basic);
+                printf("HRA (20%%)    : %.2f\n",emp[i].hra);
+                printf("DA (10%%)     : %.2f\n",emp[i].da);
+                printf("MA (5%%)      : %.2f\n",emp[i].ma);
+
+                printf("\nGross Salary : %.2f\n",emp[i].gross);
+
+                printf("PF Deduction : %.2f\n",emp[i].pf);
+                printf("Tax (Slab)   : %.2f\n",emp[i].tax);
+
+                printf("\nNet Salary   : %.2f\n",emp[i].net);
+
+                printf("\n----------------------------\n");
+            }
+        }
+
+        else if(choice==5)
         {
             printf("Program terminated\n");
             break;
